@@ -1,0 +1,3 @@
+Go Version: go version go1.24.3 linux/amd64
+Git Version: git version 2.43.0
+OS yang digunakan: Ubuntu 24.04
