@@ -26,11 +26,6 @@ func readLine(msg string) (string, error) {
 	return str, nil
 }
 
-func toNumber(str string) (int64, error) {
-	num, err := strconv.ParseInt(str, 10, 0)
-	return num, err
-}
-
 func main() {
 	for {
 		fmt.Print("\n\n")
@@ -47,7 +42,7 @@ func main() {
 			continue
 		}
 
-		age, err := toNumber(age_str)
+		age, err := strconv.Atoi(age_str)
 		if err != nil {
 			fmt.Println(">> Error: masukan bukan angka")
 			continue
