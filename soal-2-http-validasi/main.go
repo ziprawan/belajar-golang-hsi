@@ -67,6 +67,9 @@ func main() {
 		if err != nil {
 			errors = append(errors, "Field age bukan angka yang valid")
 		}
+		if age < 18 {
+			errors = append(errors, "Field age tidak valid (minimal bernilai 18)")
+		}
 
 		logrus.Infof("Didapat email=%s dan age=%d", email, age)
 		logrus.Infof("Permintaan terdapat %d kesalahan kueri", len(errors))
