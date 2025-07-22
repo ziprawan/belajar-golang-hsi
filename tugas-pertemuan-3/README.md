@@ -1,8 +1,6 @@
-# Tugas Pertemuan 3
+# Tugas Pertemuan 3 - Sistem Informasi Mahasiswa Modular
 
-## Sistem Informasi Mahasiswa Modular
-
-### Tujuan
+## Tujuan
 
 Melatih pemahaman mengenai:
 
@@ -12,15 +10,15 @@ Melatih pemahaman mengenai:
 - Modular programming menggunakan package
 - Scopre dan pengaturan akses (private/public)
 
-### Struktur
+## Struktur
 
-#### mahasiswa/model.go
+### mahasiswa/model.go
 
 Berkas ini berisi struct `Mahasiswa` yang bisa menampung data data dari satu mahasiswa dan interface `Deskripsi` yang menampung fungsi fungsi pembantu untuk mengimplementasikan konsep _Polymorphism_.
 
 Berkas ini juga terdapar variabel privat `maxNilai` yang bernilai 100.
 
-#### mahasiswa/utils.go
+### mahasiswa/utils.go
 
 Berisi fungsi privat:
 
@@ -37,10 +35,9 @@ Implementasi struct `Mahasiswa`:
 2. `(m *Mahasiswa) RataRata() float64` - Menerima parameter `m` dengan tipe pointer to `Mahasiswa` (`*Mahasiswa`), lalu menghitung rata rata nilai berdasarkan dari m.Nilai menggunakan bantuan fungsi `hitungRataRata(...) float64` dan menyimpannya kembali ke variabel `m.nilaiAvg`. Mengembalikan nilai dari `m.nilaiAvg`.
 3. `(m Mahasiswa) GetUmur() int` - Menerima parameter `m` dengan tipe `Mahasiswa` dan mengembalikan nilai privat dari `m.umur`.
 
-#### main.go
+### main.go
 
 Berkas ini adalah akses utama untuk program ini yang berisikan 2 fungsi.
 
-- `hitungUmur(...) func () int` -
-  Fungsi ini berupa variadic function yang menerima parameter bertipe mahasiswa.Mahasiswa. Fungsi ini akan mengeluarkan info semua input parameter mahasiswa dengan memanggil fungsi `mahasiswa.PrintInfo(d Deskripsi)` dan menambahkan umur mahasiswa ke `total_umur`. Mengembalikan fungsi yang mengembalikan nilai `total_umur`.
+- `hitungUmur(...) func () int` - Fungsi ini berupa variadic function yang menerima parameter bertipe mahasiswa.Mahasiswa. Fungsi ini akan mengeluarkan info semua input parameter mahasiswa dengan memanggil fungsi `mahasiswa.PrintInfo(d Deskripsi)` dan menambahkan umur mahasiswa ke `total_umur`. Mengembalikan fungsi yang mengembalikan nilai `total_umur`.
 - `main()` - Fungsi utama agar program bisa dieksekusi. Berisi data dummy mahasiswa (_hard-coded_) lalu menginisiasi fungsi `hitungUmur(...) func () int` dan diakhiri dengan mengeluarkan output info versi package, nilai maksimum, dan total keseluruhan umur mahasiswa dengan menggunakan fungsi-funsgi yang sudah disebutkan sebelumnya.
