@@ -7,10 +7,34 @@ definitions:
       username:
         type: string
     type: object
+  models.CreateStudentResponse:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      major:
+        type: string
+      name:
+        type: string
+      nim:
+        type: string
+      semester:
+        type: integer
+    type: object
   models.ErrorResponse:
     properties:
       error:
         type: string
+    type: object
+  models.GetAllStudentResponse:
+    properties:
+      pagination:
+        $ref: '#/definitions/models.Pagination'
+      students:
+        items:
+          $ref: '#/definitions/models.Student'
+        type: array
     type: object
   models.LoginResponse:
     properties:
@@ -18,6 +42,50 @@ definitions:
         type: string
       user:
         $ref: '#/definitions/models.UserSafe'
+    type: object
+  models.Pagination:
+    properties:
+      current_page:
+        type: integer
+      page_size:
+        type: integer
+      total_items:
+        type: integer
+      total_pages:
+        type: integer
+    type: object
+  models.ProfileResponse:
+    properties:
+      id:
+        type: integer
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  models.RegisterResponse:
+    properties:
+      id:
+        type: integer
+      role:
+        type: string
+      username:
+        type: string
+    type: object
+  models.Student:
+    properties:
+      email:
+        type: string
+      id:
+        type: integer
+      major:
+        type: string
+      name:
+        type: string
+      nim:
+        type: string
+      semester:
+        type: integer
     type: object
   models.UserSafe:
     properties:
@@ -28,7 +96,7 @@ definitions:
       username:
         type: string
     type: object
-host: localhost:3000
+host: localhost:8082
 info:
   contact: {}
   description: REST API sederhana untuk manajemen data mahasiswa
@@ -39,9 +107,11 @@ paths:
     post:
       consumes:
       - application/json
-      description: Authenticate user with static credentials and return JWT token
+      description: Verifikasi pengguna dengan kredensial masuk ("username" dan "password")
+        yang sudah diberikan, lalu mengembalikan info pengguna dan token JWT yang
+        bisa digunakan di header "Authorization"
       parameters:
-      - description: Login credentials
+      - description: Kredensial masuk
         in: body
         name: credentials
         required: true
@@ -51,24 +121,278 @@ paths:
       - application/json
       responses:
         "200":
-          description: Login successful
+          description: Masuk berhasil
           schema:
             $ref: '#/definitions/models.LoginResponse'
         "400":
-          description: Invalid request body
+          description: Isian permintaan salah
           schema:
             $ref: '#/definitions/models.ErrorResponse'
         "401":
-          description: Invalid credentials
+          description: Kesalahan kredensial
           schema:
             $ref: '#/definitions/models.ErrorResponse'
         "500":
-          description: Failed to generate token
+          description: Kesalahan internal server
           schema:
             $ref: '#/definitions/models.ErrorResponse'
-      summary: User login
+      summary: Masuk pengguna
       tags:
       - Authentication
+  /auth/register:
+    post:
+      consumes:
+      - application/json
+      description: Mendaftar pengguna baru dengan role/status "student" kemudian mengembalikan
+        informasi pengguna yang sudah dibuat
+      parameters:
+      - description: Kredensial pengguna baru
+        in: body
+        name: credentials
+        required: true
+        schema:
+          $ref: '#/definitions/models.AuthRequest'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Informasi pengguna yang baru didaftarkan
+          schema:
+            $ref: '#/definitions/models.RegisterResponse'
+        "400":
+          description: Isian permintaan salah
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "403":
+          description: \"username\" sudah diambil
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Kesalahan internal server
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      summary: Mendaftar pengguna baru
+      tags:
+      - Authentication
+  /profile:
+    get:
+      consumes:
+      - application/json
+      description: Ambil informasi profil pengguna berdasarkan kredensial yang diberikan
+        di kredensial "Bearer"
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Profil pengguna
+          schema:
+            $ref: '#/definitions/models.ProfileResponse'
+        "401":
+          description: Kesalahan kredensial
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Kesalahan internal server
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Ambil profil
+      tags:
+      - Profile
+  /students:
+    get:
+      consumes:
+      - application/json
+      description: Ambil semua informasi mahasiswa dengan tambahan dukungan paginasi
+      parameters:
+      - description: Ukuran daftar mahasiswa per satu permintaan
+        in: query
+        minimum: 1
+        name: page_size
+        type: integer
+      - description: Ubah ke halaman yang dituju
+        in: query
+        minimum: 1
+        name: page
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Daftar mahasiswa
+          schema:
+            $ref: '#/definitions/models.GetAllStudentResponse'
+        "400":
+          description: Isian permintaan salah
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Kesalahan kredensial
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Kesalahan internal server
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Ambil semua mahasiswa
+      tags:
+      - Students
+    post:
+      consumes:
+      - application/json
+      description: Buat data mahasiswa baru (hanya bisa diakses oleh user dengan role
+        "admin")
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Informasi mahasiswa yang telah dibuat
+          schema:
+            $ref: '#/definitions/models.CreateStudentResponse'
+        "400":
+          description: Isian permintaan salah
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Kesalahan kredensial
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Mahasiswa tidak ditemukan
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Kesalahan internal server
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Buat data mahasiswa
+      tags:
+      - Students
+  /students/:id:
+    delete:
+      consumes:
+      - application/json
+      description: Menghapus data mahasiswa berdasarkan ID (identifier/pengenal) yang
+        diberikan (hanya bisa diakses oleh user dengan role "admin")
+      parameters:
+      - description: ID (identifier/pengenal) dari mahasiswa
+        in: path
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Informasi mahasiswa yang telah dihapus
+          schema:
+            $ref: '#/definitions/models.GetAllStudentResponse'
+        "400":
+          description: Isian permintaan salah
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Kesalahan kredensial
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Mahasiswa tidak ditemukan
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Kesalahan internal server
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Hapus data mahasiswa
+      tags:
+      - Students
+    get:
+      consumes:
+      - application/json
+      description: Ambil informasi mahasiswa berdasarkan id yang diberikan
+      parameters:
+      - description: ID (identifier/pengenal) dari mahasiswa
+        in: path
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Informasi mahasiswa
+          schema:
+            $ref: '#/definitions/models.GetAllStudentResponse'
+        "400":
+          description: Isian permintaan salah
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Kesalahan kredensial
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Mahasiswa tidak ditemukan
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Kesalahan internal server
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Ambil satu mahasiswa
+      tags:
+      - Students
+    put:
+      consumes:
+      - application/json
+      description: Perbarui data mahasiswa berdasarkan ID (identifier/pengenal) yang
+        diberikan (hanya bisa diakses oleh user dengan role "admin")
+      parameters:
+      - description: ID (identifier/pengenal) dari mahasiswa
+        in: path
+        minimum: 1
+        name: page
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Informasi mahasiswa yang telah diubah
+          schema:
+            $ref: '#/definitions/models.GetAllStudentResponse'
+        "400":
+          description: Isian permintaan salah
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "401":
+          description: Kesalahan kredensial
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "404":
+          description: Mahasiswa tidak ditemukan
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+        "500":
+          description: Kesalahan internal server
+          schema:
+            $ref: '#/definitions/models.ErrorResponse'
+      security:
+      - BearerAuth: []
+      summary: Perbarui data mahasiswa
+      tags:
+      - Students
 schemes:
 - http
 securityDefinitions:

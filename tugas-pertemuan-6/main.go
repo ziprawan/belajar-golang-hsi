@@ -18,7 +18,7 @@ import (
 // @title Sistem Manajemen Mahasiswa
 // @version 1.0
 // @description REST API sederhana untuk manajemen data mahasiswa
-// @host localhost:3000
+// @host localhost:8082
 // @BasePath /api
 // @schemes http
 // @securityDefinitions.apikey BearerAuth

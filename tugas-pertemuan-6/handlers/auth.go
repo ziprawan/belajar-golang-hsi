@@ -16,17 +16,17 @@ import (
 	"gorm.io/gorm/clause"
 )
 
-// login godoc
-// @Summary User login
-// @Description Authenticate user with static credentials and return JWT token
+// Login godoc
+// @Summary Masuk pengguna
+// @Description Verifikasi pengguna dengan kredensial masuk ("username" dan "password") yang sudah diberikan, lalu mengembalikan info pengguna dan token JWT yang bisa digunakan di header "Authorization"
 // @Tags Authentication
 // @Accept json
 // @Produce json
-// @Param credentials body models.AuthRequest true "Login credentials"
-// @Success 200 {object} models.LoginResponse "Login successful"
-// @Failure 400 {object} models.ErrorResponse "Invalid request body"
-// @Failure 401 {object} models.ErrorResponse "Invalid credentials"
-// @Failure 500 {object} models.ErrorResponse "Failed to generate token"
+// @Param credentials body models.AuthRequest true "Kredensial masuk"
+// @Success 200 {object} models.LoginResponse "Masuk berhasil"
+// @Failure 400 {object} models.ErrorResponse "Isian permintaan salah"
+// @Failure 401 {object} models.ErrorResponse "Kesalahan kredensial"
+// @Failure 500 {object} models.ErrorResponse "Kesalahan internal server"
 // @Router /auth/login [post]
 func LoginHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
@@ -93,6 +93,18 @@ func LoginHandler(c *fiber.Ctx) error {
 	return c.JSON(models.LoginResponse{User: userSafe, Token: token})
 }
 
+// Register godoc
+// @Summary Mendaftar pengguna baru
+// @Description Mendaftar pengguna baru dengan role/status "student" kemudian mengembalikan informasi pengguna yang sudah dibuat
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param credentials body models.AuthRequest true "Kredensial pengguna baru"
+// @Success 201 {object} models.RegisterResponse "Informasi pengguna yang baru didaftarkan"
+// @Failure 400 {object} models.ErrorResponse "Isian permintaan salah"
+// @Failure 403 {object} models.ErrorResponse "\"username\" sudah diambil"
+// @Failure 500 {object} models.ErrorResponse "Kesalahan internal server"
+// @Router /auth/register [post]
 func RegisterHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 	body := c.Body()
