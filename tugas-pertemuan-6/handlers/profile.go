@@ -4,10 +4,10 @@ import (
 	"fmt"
 	"pertemuan6/models"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func GetProfileHandler(c fiber.Ctx) error {
+func GetProfileHandler(c *fiber.Ctx) error {
 	user, ok := c.Locals("user").(models.User)
 	if !ok {
 		fmt.Println("Invalid locals type for \"user\"")

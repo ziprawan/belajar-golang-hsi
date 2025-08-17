@@ -9,14 +9,26 @@ import (
 	"strconv"
 	"time"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 	"github.com/matthewhartstonge/argon2"
 	"gorm.io/gorm"
 	"gorm.io/gorm/clause"
 )
 
-func LoginHandler(c fiber.Ctx) error {
+// login godoc
+// @Summary User login
+// @Description Authenticate user with static credentials and return JWT token
+// @Tags Authentication
+// @Accept json
+// @Produce json
+// @Param credentials body models.AuthRequest true "Login credentials"
+// @Success 200 {object} models.LoginResponse "Login successful"
+// @Failure 400 {object} models.ErrorResponse "Invalid request body"
+// @Failure 401 {object} models.ErrorResponse "Invalid credentials"
+// @Failure 500 {object} models.ErrorResponse "Failed to generate token"
+// @Router /auth/login [post]
+func LoginHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 	conf := config.GetConfig()
 	body := c.Body()
@@ -81,7 +93,7 @@ func LoginHandler(c fiber.Ctx) error {
 	return c.JSON(models.LoginResponse{User: userSafe, Token: token})
 }
 
-func RegisterHandler(c fiber.Ctx) error {
+func RegisterHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 	body := c.Body()
 

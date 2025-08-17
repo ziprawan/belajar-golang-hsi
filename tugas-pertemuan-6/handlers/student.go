@@ -9,10 +9,10 @@ import (
 	"pertemuan6/utils"
 	"strconv"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 )
 
-func GetAllStudentHandler(c fiber.Ctx) error {
+func GetAllStudentHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 
 	// Defaults
@@ -64,7 +64,7 @@ func GetAllStudentHandler(c fiber.Ctx) error {
 	})
 }
 
-func GetStudentByIdHandler(c fiber.Ctx) error {
+func GetStudentByIdHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 
 	idParam := c.Params("id", "0")
@@ -91,7 +91,7 @@ func GetStudentByIdHandler(c fiber.Ctx) error {
 	return c.JSON(models.GetStudentByIdResponse{Student: student.Student})
 }
 
-func CreateStudentHandler(c fiber.Ctx) error {
+func CreateStudentHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 	body := c.Body()
 
@@ -132,7 +132,7 @@ func CreateStudentHandler(c fiber.Ctx) error {
 	return c.Status(201).JSON(models.CreateStudentResponse{Student: student.Student})
 }
 
-func UpdateStudentHandler(c fiber.Ctx) error {
+func UpdateStudentHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 	body := c.Body()
 
@@ -180,7 +180,7 @@ func UpdateStudentHandler(c fiber.Ctx) error {
 	return c.Status(200).JSON(models.CreateStudentResponse{Student: student.Student})
 }
 
-func DeleteStudentHandler(c fiber.Ctx) error {
+func DeleteStudentHandler(c *fiber.Ctx) error {
 	db := config.GetDB()
 
 	idParam := c.Params("id", "0")

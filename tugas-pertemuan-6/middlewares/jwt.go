@@ -7,11 +7,11 @@ import (
 	"pertemuan6/utils"
 	"strings"
 
-	"github.com/gofiber/fiber/v3"
+	"github.com/gofiber/fiber/v2"
 	"github.com/golang-jwt/jwt/v5"
 )
 
-func JwtMiddleware(c fiber.Ctx) error {
+func JwtMiddleware(c *fiber.Ctx) error {
 	conf := config.GetConfig()
 
 	auth := c.Get("Authorization")

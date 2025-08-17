@@ -6,12 +6,25 @@ import (
 	"pertemuan6/middlewares"
 	"pertemuan6/models"
 
-	"github.com/gofiber/fiber/v3"
-	"github.com/gofiber/fiber/v3/middleware/cors"
-	"github.com/gofiber/fiber/v3/middleware/logger"
-	"github.com/gofiber/fiber/v3/middleware/recover"
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"github.com/gofiber/fiber/v2/middleware/logger"
+	"github.com/gofiber/fiber/v2/middleware/recover"
+	"github.com/gofiber/swagger"
+
+	_ "pertemuan6/docs"
 )
 
+// @title Sistem Manajemen Mahasiswa
+// @version 1.0
+// @description REST API sederhana untuk manajemen data mahasiswa
+// @host localhost:3000
+// @BasePath /api
+// @schemes http
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
+// @description Diawali dengan "Bearer " lalu diikuti dengan token yang bisa diambil dari /api/auth/login
 func main() {
 	// Database migration and seeding
 	models.MigrateAll()
@@ -23,7 +36,7 @@ func main() {
 	app.Use(logger.New())
 	app.Use(recover.New())
 
-	app.Get("/swagger/*", func(c fiber.Ctx) error { return nil })
+	app.Get("/swagger/*", swagger.HandlerDefault)
 
 	api := app.Group("/api")
 
