@@ -231,11 +231,14 @@ func UpdateStudentHandler(c *fiber.Ctx) error {
 		fmt.Println(err)
 		return c.Status(500).JSON(models.InternalServerErrorResponse)
 	}
+	if tx.RowsAffected == 0 {
+		return c.Status(404).JSON(models.NotFoundErrorResponse)
+	}
 
 	return c.Status(200).JSON(models.CreateStudentResponse{Student: student.Student})
 }
 
-// UpdateStudent godoc
+// DeleteStudent godoc
 // @Summary Hapus data mahasiswa
 // @Description Menghapus data mahasiswa berdasarkan ID (identifier/pengenal) yang diberikan (hanya bisa diakses oleh user dengan role "admin")
 // @Tags Students
